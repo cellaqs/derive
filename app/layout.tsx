@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Archivo,
   Bodoni_Moda,
@@ -34,6 +34,22 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Dérive",
   description: "Interface editorial minimalista",
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Dérive",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1a1a18",
 };
 
 export default function RootLayout({
