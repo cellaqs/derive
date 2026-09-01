@@ -10,7 +10,9 @@ export function HeaderDate({ className }: { className?: string }) {
   const [date, setDate] = useState<string | null>(null)
 
   useEffect(() => {
-    setDate(new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" }))
+    const now = new Date()
+    const mes = now.toLocaleDateString("pt-BR", { month: "long" })
+    setDate(`${mes} · ${now.getFullYear()}`)
   }, [])
 
   return <span className={className}>{date}</span>

@@ -118,7 +118,7 @@ export default function ArquivoDesenhos() {
           </div>
         </div>
 
-        <Navbar active="IV" />
+        <Navbar active="III" />
       </section>
     </main>
   )

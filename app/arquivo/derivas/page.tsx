@@ -128,7 +128,7 @@ export default function DerivasCompletas() {
           </div>
         </div>
 
-        <Navbar active="IV" />
+        <Navbar active="III" />
       </section>
     </main>
   )

@@ -66,7 +66,7 @@ export default function RegistroDesenhosExpandido() {
           </div>
         </div>
 
-        <Navbar active="III" />
+        <Navbar active="II" />
       </section>
     </main>
   )

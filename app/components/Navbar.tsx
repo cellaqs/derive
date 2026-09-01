@@ -1,14 +1,13 @@
 import Link from "next/link";
 
 const tabs = [
-  { num: "I",   label: "teoria",   href: "/teoria" },
-  { num: "II",  label: "deriva",   href: "/deriva/inicio" },
-  { num: "III", label: "registro", href: "/registro" },
-  { num: "IV",  label: "arquivo",  href: "/arquivo" },
+  { num: "I",   label: "teoria",  href: "/teoria" },
+  { num: "II",  label: "deriva",  href: "/deriva/inicio" },
+  { num: "III", label: "arquivo", href: "/arquivo" },
 ];
 
 type NavbarProps = {
-  active: "I" | "II" | "III" | "IV";
+  active: "I" | "II" | "III";
 };
 
 export default function Navbar({ active }: NavbarProps) {

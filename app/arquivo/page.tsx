@@ -22,7 +22,7 @@ export default function Arquivo() {
           <ArquivoClient />
         </div>
 
-        <Navbar active="IV" />
+        <Navbar active="III" />
       </section>
     </main>
   );

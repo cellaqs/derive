@@ -10,6 +10,7 @@ import { saveDesenho } from "../../../lib/drawing-store"
 import { saveDerivaCompleta } from "../../../lib/deriva-store"
 import { AddRoundIcon, ArrowLeftIcon } from "../../../components/ui/icons"
 import { HeaderDate } from "../../../components/ui/header-date"
+import { getLocationLabel } from "../../../lib/geo"
 
 export default function RegistroDesenhos() {
   const router = useRouter()
@@ -28,13 +29,15 @@ export default function RegistroDesenhos() {
     sessionStorage.setItem("presenca_nota", e.target.value)
   }
 
-  function handleRegistrar() {
+  async function handleRegistrar() {
     const dataUrl = localStorage.getItem(CANVAS_DRAWING_KEY)
     if (!dataUrl) return
+    const location = await getLocationLabel()
     saveDesenho({ dataUrl, createdAt: new Date().toISOString(), mode: "modo presença" })
     saveDerivaCompleta({
       principal: sessionStorage.getItem("presenca_principal") ?? "deriva concluída em silêncio.",
       date: new Date().toISOString(),
+      location,
       mode: "desenho",
     })
     clearDrawing()
@@ -145,7 +148,7 @@ export default function RegistroDesenhos() {
 
         </div>
 
-        <Navbar active="III" />
+        <Navbar active="II" />
       </section>
     </main>
   )

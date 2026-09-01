@@ -34,7 +34,7 @@ export default function Registro() {
         </div>
 
         {/* Navbar — sticks to bottom */}
-        <Navbar active="III" />
+        <Navbar active="II" />
 
       </section>
     </main>

@@ -7,6 +7,7 @@ import Link from "next/link"
 import { saveRegistro } from "../lib/store"
 import { saveDerivaCompleta } from "../lib/deriva-store"
 import { formatTime } from "../lib/utils"
+import { getLocationLabel } from "../lib/geo"
 import { CameraIcon, ArrowRightIcon, ArrowLeftIcon } from "../components/ui/icons"
 
 export default function RegistroClient() {
@@ -17,6 +18,7 @@ export default function RegistroClient() {
   const [text, setText] = useState("")
   const [isFocused, setIsFocused] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [location, setLocation] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -29,6 +31,8 @@ export default function RegistroClient() {
     const url = URL.createObjectURL(file)
     setPhoto(url)
     setTime(formatTime(new Date()))
+    setLocation(null)
+    getLocationLabel().then(setLocation)
     const reader = new FileReader()
     reader.onload = (ev) => {
       const result = ev.target?.result
@@ -42,11 +46,12 @@ export default function RegistroClient() {
     if (!photoBase64) return
     setSaving(true)
     try {
+      const local = location ?? (await getLocationLabel())
       const derivaPrincipal = sessionStorage.getItem("deriva_principal") ?? undefined
       saveRegistro({
         photoBase64,
         text: text || "sem descrição",
-        location: "pinheiros",
+        location: local,
         time,
         date: new Date().toISOString(),
         derivaNumero: sessionStorage.getItem("deriva_numero") ?? undefined,
@@ -56,7 +61,7 @@ export default function RegistroClient() {
         saveDerivaCompleta({
           principal: derivaPrincipal,
           date: new Date().toISOString(),
-          location: "pinheiros",
+          location: local,
           mode: "foto",
         })
         sessionStorage.removeItem("deriva_numero")
@@ -148,7 +153,7 @@ export default function RegistroClient() {
         {photo && (
           <div className="mt-[10px] flex items-center justify-between">
             <p className="font-sans uppercase text-[#c8382a]" style={{ fontSize: "9px", letterSpacing: "2.16px" }}>
-              r. dos pinheiros, 1402
+              {location ?? "localizando..."}
             </p>
             <p className="font-sans uppercase text-[#1a1a18]/55" style={{ fontSize: "9px", letterSpacing: "2.16px" }}>
               {time}

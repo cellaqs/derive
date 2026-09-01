@@ -77,7 +77,7 @@ export default function NotFound() {
 
         </div>
 
-        <Navbar active="IV" />
+        <Navbar active="III" />
       </section>
     </main>
   )
