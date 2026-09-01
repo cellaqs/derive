@@ -5,51 +5,56 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { saveRegistro } from "../lib/store"
-import { saveDerivaCompleta } from "../lib/deriva-store"
+import { saveDerivaCompleta, DERIVA_INDICE_KEY } from "../lib/deriva-store"
 import { formatTime } from "../lib/utils"
 import { getLocationLabel } from "../lib/geo"
+import { comprimirImagem } from "../lib/image"
+import { ArmazenamentoCheioError } from "../lib/storage"
 import { CameraIcon, ArrowRightIcon, ArrowLeftIcon } from "../components/ui/icons"
 
 export default function RegistroClient() {
   const router = useRouter()
   const [photo, setPhoto] = useState<string | null>(null)
-  const [photoBase64, setPhotoBase64] = useState<string | null>(null)
   const [time, setTime] = useState("")
   const [text, setText] = useState("")
   const [isFocused, setIsFocused] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
   const [location, setLocation] = useState<string | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
+  const arquivoRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setTime(formatTime(new Date()))
   }, [])
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    e.target.value = ""
     if (!file) return
-    const url = URL.createObjectURL(file)
-    setPhoto(url)
+
+    setErro(null)
     setTime(formatTime(new Date()))
     setLocation(null)
     getLocationLabel().then(setLocation)
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      const result = ev.target?.result
-      if (typeof result === "string") setPhotoBase64(result)
+
+    try {
+      // Comprime já na seleção: o que fica em memória é o mesmo que será salvo.
+      setPhoto(await comprimirImagem(file))
+    } catch {
+      setErro("não foi possível ler essa imagem. tente outra.")
     }
-    reader.readAsDataURL(file)
-    e.target.value = ""
   }
 
   const handleSalvar = async () => {
-    if (!photoBase64) return
+    if (!photo) return
     setSaving(true)
+    setErro(null)
     try {
       const local = location ?? (await getLocationLabel())
       const derivaPrincipal = sessionStorage.getItem("deriva_principal") ?? undefined
       saveRegistro({
-        photoBase64,
+        photoBase64: photo,
         text: text || "sem descrição",
         location: local,
         time,
@@ -64,17 +69,24 @@ export default function RegistroClient() {
           location: local,
           mode: "foto",
         })
-        sessionStorage.removeItem("deriva_numero")
-        sessionStorage.removeItem("deriva_principal")
       }
+      // deriva concluída: libera o sorteio da próxima
+      sessionStorage.removeItem(DERIVA_INDICE_KEY)
+      sessionStorage.removeItem("deriva_numero")
+      sessionStorage.removeItem("deriva_principal")
       router.push("/arquivo")
-    } catch {
+    } catch (e) {
       setSaving(false)
+      setErro(
+        e instanceof ArmazenamentoCheioError
+          ? "sem espaço no navegador. apague alguns registros antigos."
+          : "não foi possível salvar. tente de novo."
+      )
     }
   }
 
   const handleRefazer = () => {
-    inputRef.current?.click()
+    cameraRef.current?.click()
   }
 
   return (
@@ -125,29 +137,64 @@ export default function RegistroClient() {
             <span className="pointer-events-none absolute -bottom-[4px] -right-[4px] h-[10px] w-[10px] border-b border-r border-[#1a1a18]" />
           </div>
         ) : (
-          <button
-            onClick={() => inputRef.current?.click()}
+          <div
             className="relative w-full overflow-hidden"
             style={{
               height: "298px",
               backgroundColor: "#eeede9",
               border: "1px solid #676360",
             }}
-            aria-label="Selecionar imagem da galeria"
           >
-            <div className="flex h-full flex-col items-center justify-center gap-3">
+            <div className="flex h-full flex-col items-center justify-center gap-3 px-6">
               <CameraIcon />
               <p className="font-sans uppercase text-[#403f3b]" style={{ fontSize: "10px", letterSpacing: "3px" }}>
                 registrar a imagem
               </p>
               <p className="font-editorial italic text-[#403f3b]" style={{ fontSize: "12px", lineHeight: "18px" }}>
-                toque para capturar
+                use a câmera ou escolha do celular
               </p>
+
+              <div className="mt-2 flex items-center gap-2">
+                <button
+                  onClick={() => cameraRef.current?.click()}
+                  className="border border-[#c8382a] bg-[#faf6f2] px-[14px] py-[6px] font-sans text-[9px] font-semibold uppercase tracking-[2.16px] text-[#c8382a] transition-opacity hover:opacity-80"
+                >
+                  câmera
+                </button>
+                <button
+                  onClick={() => arquivoRef.current?.click()}
+                  className="border border-[#676360] bg-transparent px-[14px] py-[6px] font-sans text-[9px] font-semibold uppercase tracking-[2.16px] text-[#403f3b] transition-opacity hover:opacity-80"
+                >
+                  arquivos
+                </button>
+              </div>
             </div>
-          </button>
+          </div>
         )}
 
-        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+        {/* Câmera: `capture` abre direto a câmera traseira no celular */}
+        <input
+          ref={cameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleFile}
+        />
+        {/* Arquivos: sem `capture`, abre a galeria / gerenciador de arquivos */}
+        <input
+          ref={arquivoRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFile}
+        />
+
+        {erro && (
+          <p className="mt-[10px] font-sans text-[9px] uppercase tracking-[1.8px] text-[#c8382a]">
+            {erro}
+          </p>
+        )}
 
         {/* Rua row — 10px below image, only when photo exists */}
         {photo && (
@@ -219,7 +266,7 @@ export default function RegistroClient() {
             /* ── State: empty — show registrar + voltar ── */
             <>
               <button
-                onClick={() => inputRef.current?.click()}
+                onClick={() => cameraRef.current?.click()}
                 className="flex h-[56px] w-full items-center justify-between rounded-[2px] bg-[#1a1a18] px-4 transition-opacity hover:opacity-90"
               >
                 <span className="font-sans uppercase font-semibold text-white" style={{ fontSize: "12px", letterSpacing: "3.36px" }}>

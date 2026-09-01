@@ -1,3 +1,6 @@
+import { chaveDoUsuario } from "./session"
+import { lerLista, gravarLista } from "./storage"
+
 export interface RegistroEntry {
   id: string
   photoBase64: string
@@ -9,26 +12,21 @@ export interface RegistroEntry {
   derivaPrincipal?: string
 }
 
-const STORAGE_KEY = "derive_registros"
+// Resolvida a cada chamada: a conta logada pode mudar durante a sessão.
+const chave = () => chaveDoUsuario("derive_registros")
 
 export function getRegistros(): RegistroEntry[] {
-  if (typeof window === "undefined") return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
+  return lerLista<RegistroEntry>(chave())
 }
 
 export function saveRegistro(entry: Omit<RegistroEntry, "id">): RegistroEntry {
   const registros = getRegistros()
   const novo: RegistroEntry = { ...entry, id: Date.now().toString() }
   registros.push(novo)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(registros))
+  gravarLista(chave(), registros)
   return novo
 }
 
 export function clearRegistros() {
-  localStorage.removeItem(STORAGE_KEY)
+  localStorage.removeItem(chave())
 }

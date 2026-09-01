@@ -1,3 +1,9 @@
+import { chaveDoUsuario } from "./session"
+import { lerLista, gravarLista } from "./storage"
+
+/** Índice da deriva em andamento nesta sessão — mantém a mesma instrução ao voltar. */
+export const DERIVA_INDICE_KEY = "deriva_indice"
+
 export interface DerivaCompletaEntry {
   id: string
   numero: string
@@ -7,16 +13,10 @@ export interface DerivaCompletaEntry {
   mode: "foto" | "desenho"
 }
 
-const KEY = "derive_derivas_completas"
+const chave = () => chaveDoUsuario("derive_derivas_completas")
 
 export function getDerivasCompletas(): DerivaCompletaEntry[] {
-  if (typeof window === "undefined") return []
-  try {
-    const raw = localStorage.getItem(KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
+  return lerLista<DerivaCompletaEntry>(chave())
 }
 
 export function saveDerivaCompleta(
@@ -29,6 +29,6 @@ export function saveDerivaCompleta(
     numero: String(list.length + 1).padStart(2, "0"),
   }
   list.push(nova)
-  localStorage.setItem(KEY, JSON.stringify(list))
+  gravarLista(chave(), list)
   return nova
 }

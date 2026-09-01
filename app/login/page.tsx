@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowRightIcon } from "../components/ui/icons"
 import { verificarLogin } from "../lib/identity-store"
+import { iniciarSessao } from "../lib/session"
 
 export default function Login() {
   const router = useRouter()
@@ -23,6 +24,7 @@ export default function Login() {
       return
     }
     setErro(false)
+    iniciarSessao(identidade)
     router.push("/intro")
   }
 

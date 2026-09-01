@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import Navbar from "../../components/Navbar"
 import { getDesenhos, type DrawingEntry } from "../../lib/drawing-store"
-import { SettingsIcon, ArrowRightIcon } from "../../components/ui/icons"
+import { ArrowRightIcon } from "../../components/ui/icons"
+import { LogoutButton } from "../../components/ui/logout-button"
 import { HeaderDate } from "../../components/ui/header-date"
 import DrawingThumbnail from "../../components/ui/drawing-thumbnail"
 
@@ -41,9 +42,7 @@ export default function ArquivoDesenhos() {
                   <h1 className="font-serif text-[52px] leading-[52px] text-[#1a1a18]">arquivo</h1>
                   <p className="font-editorial italic text-[26px] leading-normal text-[#6a6962]">de campo</p>
                 </div>
-                <button className="mt-1 p-1 transition-opacity hover:opacity-60" aria-label="Configurações">
-                  <SettingsIcon />
-                </button>
+                <LogoutButton />
               </div>
 
               <div className="flex items-end justify-between border-b border-[#393936] pb-[22px]">

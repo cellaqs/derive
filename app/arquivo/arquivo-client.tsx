@@ -5,7 +5,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { getRegistros, type RegistroEntry } from "../lib/store"
 import { formatDate } from "../lib/utils"
-import { SettingsIcon, ArrowRightIcon } from "../components/ui/icons"
+import { ArrowRightIcon } from "../components/ui/icons"
+import { LogoutButton } from "../components/ui/logout-button"
 
 function ImageCard({ entry, tall }: { entry: RegistroEntry; tall?: boolean }) {
   return (
@@ -67,9 +68,7 @@ export default function ArquivoClient() {
                 de campo
               </p>
             </div>
-            <button className="mt-1 p-1 transition-opacity hover:opacity-60" aria-label="Configurações">
-              <SettingsIcon />
-            </button>
+            <LogoutButton />
           </div>
 
           {/* Stats com border-bottom */}

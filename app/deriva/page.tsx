@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { ArrowRightIcon } from "../components/ui/icons";
+import { DERIVA_INDICE_KEY } from "../lib/deriva-store";
 
 const DERIVAS = [
   {
@@ -179,17 +180,30 @@ const DERIVAS = [
 ];
 
 export default function Deriva() {
-  const [index] = useState(() =>
-    Math.floor(Math.random() * DERIVAS.length)
-  );
-
-  const deriva = DERIVAS[index];
+  // Só é sorteada quando ainda não há uma deriva em andamento: assim, voltar
+  // para rever a instrução mantém a mesma, em vez de sortear outra.
+  const [deriva, setDeriva] = useState<(typeof DERIVAS)[number] | null>(null);
 
   useEffect(() => {
-    sessionStorage.setItem("deriva_numero", deriva.numero);
-    sessionStorage.setItem("deriva_principal", deriva.principal);
-  // index is fixed on mount — effect runs once
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Atenção: Number(null) é 0, então a ausência da chave precisa ser
+    // checada na string crua — senão "sem deriva" viraria "deriva 0".
+    const bruto = sessionStorage.getItem(DERIVA_INDICE_KEY);
+    const salvo = bruto === null ? NaN : Number(bruto);
+    const emAndamento =
+      Number.isInteger(salvo) && salvo >= 0 && salvo < DERIVAS.length;
+
+    const index = emAndamento
+      ? salvo
+      : Math.floor(Math.random() * DERIVAS.length);
+
+    if (!emAndamento) {
+      sessionStorage.setItem(DERIVA_INDICE_KEY, String(index));
+    }
+
+    const escolhida = DERIVAS[index];
+    setDeriva(escolhida);
+    sessionStorage.setItem("deriva_numero", escolhida.numero);
+    sessionStorage.setItem("deriva_principal", escolhida.principal);
   }, []);
 
   return (
@@ -205,7 +219,7 @@ export default function Deriva() {
                 instrução
               </p>
               <p className="font-serif text-[26px] leading-[26px] text-[#1a1a18]">
-                {deriva.numero}
+                {deriva?.numero ?? ""}
               </p>
             </div>
             <div className="text-right">
@@ -230,6 +244,7 @@ export default function Deriva() {
               }}
             >
               {(() => {
+                if (!deriva) return null;
                 const text = deriva.principal.replace(/\.$/, "");
                 const lastSpace = text.lastIndexOf(" ");
                 const before = text.slice(0, lastSpace + 1);
@@ -248,7 +263,7 @@ export default function Deriva() {
               className="font-editorial italic text-[#333333]"
               style={{ fontSize: "14px", lineHeight: "15px" }}
             >
-              {deriva.secundaria}
+              {deriva?.secundaria ?? ""}
             </p>
           </div>
 
@@ -267,6 +282,12 @@ export default function Deriva() {
             <div className="flex items-center gap-6 pt-5">
               <Link
                 href="/teoria"
+                onClick={() => {
+                  // abandonar a deriva libera o sorteio da próxima
+                  sessionStorage.removeItem(DERIVA_INDICE_KEY);
+                  sessionStorage.removeItem("deriva_numero");
+                  sessionStorage.removeItem("deriva_principal");
+                }}
                 className="flex items-center gap-2 text-[#1a1a18]/70 transition-opacity hover:opacity-100"
               >
                 <span className="font-sans text-[9px] leading-none">←</span>

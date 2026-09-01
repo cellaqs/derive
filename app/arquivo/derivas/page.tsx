@@ -5,7 +5,8 @@ import { useEffect, useState } from "react"
 import Navbar from "../../components/Navbar"
 import { getDerivasCompletas, DerivaCompletaEntry } from "../../lib/deriva-store"
 import { formatDate } from "../../lib/utils"
-import { SettingsIcon, ArrowRightIcon } from "../../components/ui/icons"
+import { ArrowRightIcon } from "../../components/ui/icons"
+import { LogoutButton } from "../../components/ui/logout-button"
 import { HeaderDate } from "../../components/ui/header-date"
 
 function lastWordRed(text: string) {
@@ -53,9 +54,7 @@ export default function DerivasCompletas() {
                   <h1 className="font-serif text-[52px] leading-[52px] text-[#1a1a18]">arquivo</h1>
                   <p className="font-editorial italic text-[26px] leading-normal text-[#6a6962]">de campo</p>
                 </div>
-                <button className="mt-1 p-1 transition-opacity hover:opacity-60" aria-label="Configurações">
-                  <SettingsIcon />
-                </button>
+                <LogoutButton />
               </div>
 
               <div className="flex items-end justify-between border-b border-[#393936] pb-[22px]">

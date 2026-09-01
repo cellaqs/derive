@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { identidadeExiste, criarIdentidade } from "../lib/identity-store"
+import { iniciarSessao } from "../lib/session"
 import { ArrowRightIcon } from "../components/ui/icons"
 
 const CODIGO_MIN = 4
@@ -37,6 +38,7 @@ export default function Cadastro() {
     setErroSenha(false)
     setEnviando(true)
     await criarIdentidade(identidade, codigo)
+    iniciarSessao(identidade)
     router.push("/intro")
   }
 
