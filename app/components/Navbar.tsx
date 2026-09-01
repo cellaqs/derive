@@ -12,14 +12,14 @@ type NavbarProps = {
 
 export default function Navbar({ active }: NavbarProps) {
   return (
-    <nav className="flex h-[62px] w-full items-center justify-center gap-[42px] bg-[#1a1a18] px-[30px]">
+    <nav className="flex h-[62px] w-full items-center bg-[#1a1a18] px-5">
       {tabs.map((tab) => {
         const isActive = tab.num === active;
         return (
           <Link
             key={tab.num}
             href={tab.href}
-            className={`flex min-w-fit flex-col items-center justify-center gap-1 py-3 border-t ${
+            className={`flex flex-1 flex-col items-center justify-center gap-1 py-3 border-t ${
               isActive ? "border-[#c8382a]" : "border-transparent"
             }`}
           >
