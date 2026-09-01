@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --background: #f1f0ed;
+  --foreground: #212127;
+
+  /* ── Dérive Design Tokens ── */
+  --color-bg-outer:   #d9d7d2;
+  --color-bg-card:    #f1f0ed;
+  --color-bg-dark:    #25262b;
+  --color-bg-upload:  #f0e9de;
+
+  --color-ink:        #1a1a18;
+  --color-ink-light:  #f4f0e9;
+  --color-ink-muted:  #928f8a;
+  --color-ink-upload: #403f3b;
+
+  --color-red:        #c8382a;
+  --color-red-dark:   #a82e22;
+  --color-red-on-dark:#b02a22;
+
+  --color-divider:    #9b9898;
+  --color-border-upload: #676360;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-archivo), ui-sans-serif, sans-serif;
+  --font-display: var(--font-bodoni), serif;
+  --font-serif: var(--font-dm-serif), "DM Serif Display", serif;
+  --font-editorial: var(--font-instrument-serif), "Instrument Serif", serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-archivo), sans-serif;
+}

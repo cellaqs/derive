@@ -1,0 +1,18 @@
+
+> derive@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.113:3000
+
+ ✓ Starting...
+ ✓ Ready in 1734ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ○ Compiling / ...
+ ✓ Compiled / in 4.3s (1490 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 4678ms
+ GET / 200 in 50ms
+ ✓ Compiled /favicon.ico in 346ms (817 modules)
+ GET /favicon.ico 200 in 445ms
