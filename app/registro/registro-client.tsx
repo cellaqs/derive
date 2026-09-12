@@ -21,8 +21,7 @@ export default function RegistroClient() {
   const [saving, setSaving] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [location, setLocation] = useState<string | null>(null)
-  const cameraRef = useRef<HTMLInputElement>(null)
-  const arquivoRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setTime(formatTime(new Date()))
@@ -86,7 +85,7 @@ export default function RegistroClient() {
   }
 
   const handleRefazer = () => {
-    cameraRef.current?.click()
+    inputRef.current?.click()
   }
 
   return (
@@ -137,53 +136,31 @@ export default function RegistroClient() {
             <span className="pointer-events-none absolute -bottom-[4px] -right-[4px] h-[10px] w-[10px] border-b border-r border-[#1a1a18]" />
           </div>
         ) : (
-          <div
+          <button
+            onClick={() => inputRef.current?.click()}
             className="relative w-full overflow-hidden"
             style={{
               height: "298px",
               backgroundColor: "#eeede9",
               border: "1px solid #676360",
             }}
+            aria-label="Registrar imagem"
           >
-            <div className="flex h-full flex-col items-center justify-center gap-3 px-6">
+            <div className="flex h-full flex-col items-center justify-center gap-3">
               <CameraIcon />
               <p className="font-sans uppercase text-[#403f3b]" style={{ fontSize: "10px", letterSpacing: "3px" }}>
                 registrar a imagem
               </p>
               <p className="font-editorial italic text-[#403f3b]" style={{ fontSize: "12px", lineHeight: "18px" }}>
-                use a câmera ou escolha do celular
+                toque para capturar
               </p>
-
-              <div className="mt-2 flex items-center gap-2">
-                <button
-                  onClick={() => cameraRef.current?.click()}
-                  className="border border-[#c8382a] bg-[#faf6f2] px-[14px] py-[6px] font-sans text-[9px] font-semibold uppercase tracking-[2.16px] text-[#c8382a] transition-opacity hover:opacity-80"
-                >
-                  câmera
-                </button>
-                <button
-                  onClick={() => arquivoRef.current?.click()}
-                  className="border border-[#676360] bg-transparent px-[14px] py-[6px] font-sans text-[9px] font-semibold uppercase tracking-[2.16px] text-[#403f3b] transition-opacity hover:opacity-80"
-                >
-                  arquivos
-                </button>
-              </div>
             </div>
-          </div>
+          </button>
         )}
 
-        {/* Câmera: `capture` abre direto a câmera traseira no celular */}
+        {/* Sem `capture`: o próprio celular oferece câmera ou galeria/arquivos */}
         <input
-          ref={cameraRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleFile}
-        />
-        {/* Arquivos: sem `capture`, abre a galeria / gerenciador de arquivos */}
-        <input
-          ref={arquivoRef}
+          ref={inputRef}
           type="file"
           accept="image/*"
           className="hidden"
@@ -266,7 +243,7 @@ export default function RegistroClient() {
             /* ── State: empty — show registrar + voltar ── */
             <>
               <button
-                onClick={() => cameraRef.current?.click()}
+                onClick={() => inputRef.current?.click()}
                 className="flex h-[56px] w-full items-center justify-between rounded-[2px] bg-[#1a1a18] px-4 transition-opacity hover:opacity-90"
               >
                 <span className="font-sans uppercase font-semibold text-white" style={{ fontSize: "12px", letterSpacing: "3.36px" }}>
